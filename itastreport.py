@@ -37,19 +37,20 @@ elif args.command[0] == 'analyse':
 
 elif args.command[0] == 'report':
   session = itast.db.load_session_data(db, args.keyword)
-  outFile = "Report_XXX.xlsx"
   if session:
-    if len(session['expedient'])>3:
+    if len(session['expedient']) > 3:
       expedient = session['expedient'].strip()
     else:
       expedient = str(session['id'])
     outFile = "Report_" + expedient + "_" + str(session['id']) + ".xlsx"
     print "Writing report of session " + str(session['id']) + " to file: " + Style.BRIGHT + outFile + Style.RESET_ALL
-    print ""
+    
     cards = itast.db.load_card_results_by_session(db, args.keyword, TX_LIMIT)
 
-    from openpyxl import Workbook
-    wb = Workbook()
+    from openpyxl import load_workbook
+    templateFile = 'Blank_ Device_Cross_Testing_Sheet_20190604.xlsx'
+    wb = load_workbook(templateFile)
+    wb['Cross_test_results']['B1'] = session['visa_vtf']  # add visa vtf
     itast.db.export_results_to_excel(cards, wb, TX_LIMIT)
     wb.save(outFile)
   else:
