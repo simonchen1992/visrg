@@ -1,6 +1,5 @@
 # XT Report Generator #
-### 2019.9.29 ###
-Make the ROADMAP
+### Logic of XT report generator ###
 1. Find the test session id.
 2. List all ACTIVE cards in database.
 3. Fill position verdicts in database row by row. (Import note: If there are multiple position verdicts for one position/card/session. The tool will only pick the recent one.)
@@ -15,8 +14,14 @@ Make the ROADMAP
     - Position verdict contains "Pending": card verdict is considered as "Pending".
     - Position verdict contains "DF/CF/TF", and not contains "Pending": card verdict is considered as "FAIL".
     - Position verdict contains ONLY "PASS": card verdict is considered as "PASS".
-    
-Make the VISA Report
+
+### How to Make the VISA Report ###
 1. Generate the VISA report from data in Roadmap.
 2. Copy the VISA Report to "paintTemplate.xlsm" to paint fail positions into red.
 3. Copy the painted VISA Report back to VISA template.
+
+### How to update VISA template ###
+1. Save the latest VISA template under the path: /docs/VisaTemplate/
+2. It's all done. 
+
+*Bear in mind to set proper Visa Template name in database when starting a new XT session.
