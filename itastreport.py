@@ -48,9 +48,19 @@ elif args.command[0] == 'report':
     cards = itast.db.load_card_results_by_session(db, args.keyword, TX_LIMIT)
 
     from openpyxl import load_workbook
-    templateFile = 'Blank_ Device_Cross_Testing_Sheet_20190604.xlsx'
-    wb = load_workbook(templateFile)
+    templateFile = session['report_template']
+    #templateFile = 'Blank_ Device_Cross_Testing_Sheet_20190604.xlsx'
+    wb = load_workbook('docs/VisaTemplate/' + templateFile)
     wb['Cross_test_results']['B1'] = session['visa_vtf']  # add visa vtf
+    # add testing date
+    import MySQLdb
+    cur = db.cursor(cursorclass=MySQLdb.cursors.DictCursor)
+    cur.execute("SELECT created FROM test_cases WHERE id_test_session = " + str(args.keyword) + " ORDER BY created ASC LIMIT 1")
+    startdate = cur.fetchallDict()[0]['created']
+    cur.execute("SELECT created FROM test_cases WHERE id_test_session = " + str(args.keyword) + " ORDER BY created DESC LIMIT 1")
+    enddate = cur.fetchallDict()[0]['created']
+    wb['Cross_test_results']['B334'] = startdate  # add visa vtf
+    wb['Cross_test_results']['B335'] = enddate
     itast.db.export_results_to_excel(cards, wb, TX_LIMIT)
     wb.save(outFile)
   else:

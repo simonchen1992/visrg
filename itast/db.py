@@ -3,7 +3,7 @@ from sys import stdout
 
 # Utility for printing in colourful
 from colorama import init
-from colorama import Fore, Back, Style
+#from colorama import Fore, Back, Style
 
 
 init()
@@ -135,6 +135,7 @@ def load_card_results_by_session(db, idsession, txlimit=1):
     # Get Visa Cards from DB
     cur.execute("SELECT * FROM visa_cards WHERE active = 1 ORDER BY vtf ASC;")
     visaCards = cur.fetchallDict()
+    
     # For each card in Visa card deck, get the most recent 10 txs from DB
     for card in visaCards:
         card['txs'] = {}
@@ -285,8 +286,6 @@ def testposition(st):
     ntpos = ntpos.split(',')
     #testpos = [i for i in getPositions() if i not in ntpos]
     return ntpos
-
-
 
 
 def getPositions():

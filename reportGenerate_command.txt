@@ -1,0 +1,2 @@
+1. CD to the ITAST_reportgen\ITAST-Clients\python
+2. python itastreport.py report session_ID
