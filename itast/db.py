@@ -179,13 +179,15 @@ def export_results_to_excel(cards, wb, txlimit=1):
         cardData.append('XX')
         # determine required test position for each card
         ntpos = testposition(card['positions'])
-        cardsData[card['vtf'].strip()]['positions'] = card['positions']
+        cardsData[card['vtf'].strip()]['ntpositions'] = card['positions']  # ntpositions in cardsData is only to check if ntpositions in database is same as in VISA tempalte; raised by Evelyn
         if card['threefail_flag']:
             cardsData[card['vtf'].strip()]['positions'] = card['positions'].replace(' NT@2N, NT@2S, NT@2E, NT@2W,', '')
             ntpos.remove('2W')
             ntpos.remove('2E')
             ntpos.remove('2N')
             ntpos.remove('2S')
+        else:
+            cardsData[card['vtf'].strip()]['positions'] = card['positions']
         # cardData only collect those test results for required test positions
         for pos in getPositions():
             if pos in ntpos:
@@ -255,9 +257,9 @@ def export_results_to_excel(cards, wb, txlimit=1):
         write cardsData into VISA REPORT if writeReportFlag is true
     """
     # write to visa result template
-    # if not writeReportFlag:
-    #     print 'The report is not complete, please check roadmap!\n'
-    #     return
+    if not writeReportFlag:
+        print 'The report is not complete, please check roadmap!\n'
+        return
     wsVisaReport = wb['Cross_test_results']
     for row in wsVisaReport.iter_rows(min_row=4, min_col=2, max_col=2):
         cardVtf = row[0]
@@ -269,9 +271,12 @@ def export_results_to_excel(cards, wb, txlimit=1):
             positionCol = 'G'
             wsVisaReport[resultCol + str(cardVtf.row)].value = cardsData[cardVtf.value]['result']
             wsVisaReport[locationCol + str(cardVtf.row)].value = 'Applus Shanghai'
-            wsVisaReport[positionCol + str(cardVtf.row)].value = cardsData[cardVtf.value]['positions']
+            if wsVisaReport[positionCol + str(cardVtf.row)].value == cardsData[cardVtf.value]['ntpositions']:
+                wsVisaReport[positionCol + str(cardVtf.row)].value = cardsData[cardVtf.value]['positions']
+            else:
+                raise Exception('test positions in database is not same as in VISA template for card %s, please check manually!' % cardVtf.value)
         except KeyError as e:
-            print('Could not find vtf in VISA REPORT, please check the version of VISA template')
+            print('Could not find result of %s in roadmap, please check the version of VISA template' % cardVtf.value)
             raise KeyError(str(e))
 
 

@@ -56,11 +56,16 @@ elif args.command[0] == 'report':
     import MySQLdb
     cur = db.cursor(cursorclass=MySQLdb.cursors.DictCursor)
     cur.execute("SELECT created FROM test_cases WHERE id_test_session = " + str(args.keyword) + " ORDER BY created ASC LIMIT 1")
-    startdate = cur.fetchallDict()[0]['created']
+    startdate = cur.fetchallDict()
+    startdate = str(startdate[0]['created']).split(' ')[0]
     cur.execute("SELECT created FROM test_cases WHERE id_test_session = " + str(args.keyword) + " ORDER BY created DESC LIMIT 1")
-    enddate = cur.fetchallDict()[0]['created']
-    wb['Cross_test_results']['B334'] = startdate  # add visa vtf
-    wb['Cross_test_results']['B335'] = enddate
+    enddate = cur.fetchallDict()
+    enddate = str(enddate[0]['created']).split(' ')[0]
+    for cell in wb['Cross_test_results']['A']:
+      if cell.value == 'Cross testing start date':
+        wb['Cross_test_results']['B' + str(cell.row)] = startdate  # add visa vtf
+      if cell.value == 'Cross testing end date':
+        wb['Cross_test_results']['B' + str(cell.row)] = enddate  # add visa vtf
     itast.db.export_results_to_excel(cards, wb, TX_LIMIT)
     wb.save(outFile)
   else:
